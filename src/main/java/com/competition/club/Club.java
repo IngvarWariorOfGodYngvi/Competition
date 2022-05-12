@@ -32,8 +32,8 @@ public class Club {
         this.name = name;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public String getUuid() {
+        return uuid;
     }
 
     public String getName() {

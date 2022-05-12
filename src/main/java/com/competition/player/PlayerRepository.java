@@ -15,4 +15,7 @@ public interface PlayerRepository {
     Player save(Player entity);
 
 
+    boolean existsById(String uuid);
+
+    boolean existsByStartNumber(String startNumber);
 }

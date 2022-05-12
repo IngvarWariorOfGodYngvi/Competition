@@ -4,6 +4,10 @@ import com.competition.mapping.ClubMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 @Service
 public class ClubService {
 
@@ -32,18 +36,29 @@ public class ClubService {
     }
 
     public ResponseEntity<?> updateClub(String uuid, ClubDTO club) {
-        if (clubRepository.existsById(uuid)) {
+        if (clubRepository.existsById(uuid) && !clubRepository.existsByName(club.getName())) {
             Club one = clubRepository.getOne(uuid);
             one.changeCity(club.getCity());
             one.changeName(club.getName());
             clubRepository.save(one);
-            return ResponseEntity.ok("zmieniono nazwę klubu");
+            return ResponseEntity.ok("Edytowano klubu");
         } else {
-            return ResponseEntity.badRequest().body("Nieznaleziono klubu");
+            return ResponseEntity.badRequest().body("Nieznaleziono klubu lub takowy już istnieje");
         }
     }
 
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(clubRepository.findAll());
+    }
+
+    public ResponseEntity<?> getAllClubNames() {
+        List<String> list = new ArrayList<>();
+        List<Club> all = clubRepository.findAll();
+        all.sort(Comparator.comparing(Club::getName));
+
+        all.forEach(e ->
+                list.add(e.getName().trim())
+        );
+        return ResponseEntity.ok(list);
     }
 }

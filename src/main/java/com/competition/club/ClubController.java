@@ -20,7 +20,17 @@ public class ClubController {
     }
 
     @GetMapping("/")
-    public  ResponseEntity<?> getAll(){
+    public ResponseEntity<?> getAll() {
         return clubService.getAll();
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<?> getAllClubNames() {
+        return clubService.getAllClubNames();
+    }
+
+    @PutMapping("/")
+    public ResponseEntity<?> updateClub(@RequestParam String uuid, @RequestBody ClubDTO club){
+        return clubService.updateClub(uuid,club);
     }
 }

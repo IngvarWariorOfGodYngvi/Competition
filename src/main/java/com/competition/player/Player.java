@@ -28,8 +28,8 @@ public class Player {
     @ManyToOne
     private Club club;
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public String getUuid() {
+        return uuid;
     }
 
     public String getFirstName() {

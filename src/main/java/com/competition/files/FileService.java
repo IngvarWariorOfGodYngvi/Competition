@@ -60,10 +60,9 @@ public class FileService {
             int size = 40;
             int bold = 1;
             Paragraph space = new Paragraph(" ", font(100, bold));
-            Paragraph number = new Paragraph(player.getStartNumber(), font(size, bold));
+            Paragraph number = new Paragraph(player.getStartNumber(), font(size+30, bold));
             Paragraph name = new Paragraph(player.getSecondName().toUpperCase() + " " + player.getFirstName(), font(size, bold));
             Paragraph club = new Paragraph(player.getClub().getName().toUpperCase() + " " + player.getClub().getCity(), font(size, bold));
-
             //0             1               2
             int align = Element.ALIGN_CENTER;
             space.setAlignment(align);
@@ -106,7 +105,7 @@ public class FileService {
         try {
             BufferedReader br = Files.newBufferedReader(pathToFile, Charset.defaultCharset());
             String line = br.readLine();
-            while (line != null) {
+            while (line !=null) {
                 String[] data = line.split(";");
                 System.out.println(Arrays.asList(data));
                 String player = playerService.createPlayer(data);
