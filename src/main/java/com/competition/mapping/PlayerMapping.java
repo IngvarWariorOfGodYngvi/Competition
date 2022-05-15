@@ -11,6 +11,7 @@ public class PlayerMapping {
                 .secondName(p.getSecondName())
                 .licenseNumber(p.getLicenseNumber())
                 .vintage(p.getVintage())
+                .startNumber(p.getStartNumber())
                 .build();
 
     }

@@ -1,6 +1,5 @@
 package com.competition.player;
 
-import com.competition.club.ClubDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +16,8 @@ public class PlayerController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createPlayer(@RequestBody PlayerDTO player, @RequestBody ClubDTO club) {
-        return playerService.createPlayer(player, club);
+    public ResponseEntity<?> createPlayer(@RequestBody PlayerDTO player, @RequestParam String club) {
+        return playerService.createPlayer(player, club.trim());
     }
     @GetMapping("/")
     public  ResponseEntity<?> getAll(){

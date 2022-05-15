@@ -13,6 +13,7 @@ public class PlayerDTO {
     private String secondName;
     private String licenseNumber;
     private String vintage;
+    private String startNumber;
 
     public String getFirstName() {
         return firstName;
@@ -44,5 +45,13 @@ public class PlayerDTO {
 
     public void setVintage(String vintage) {
         this.vintage = vintage;
+    }
+
+    public String getStartNumber() {
+        return startNumber;
+    }
+
+    public void setStartNumber(String startNumber) {
+        this.startNumber = startNumber;
     }
 }

@@ -1,6 +1,5 @@
 package com.competition.files;
 
-import com.competition.club.ClubRepository;
 import com.competition.player.Player;
 import com.competition.player.PlayerRepository;
 import com.competition.player.PlayerService;
@@ -13,13 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -30,16 +24,13 @@ import java.util.stream.Collectors;
 @Service
 public class FileService {
 
-    private final ClubRepository clubRepository;
-
     private final FileRepository fileRepository;
 
     private final PlayerService playerService;
 
     private final PlayerRepository playerRepository;
 
-    public FileService(ClubRepository clubRepository, FileRepository fileRepository, PlayerService playerService, PlayerRepository playerRepository) {
-        this.clubRepository = clubRepository;
+    public FileService(FileRepository fileRepository, PlayerService playerService, PlayerRepository playerRepository) {
         this.fileRepository = fileRepository;
         this.playerService = playerService;
         this.playerRepository = playerRepository;
@@ -56,13 +47,19 @@ public class FileService {
         document.open();
         document.addTitle(fileName);
         document.addCreationDate();
+
+//        PdfContentByte cb = writer.getDirectContent();
+//        String path1 = "Wniosek_o_przedluzenie_licencji_zawodniczej.pdf";
+//        PdfReader reader = new PdfReader(path1);
+//        PdfImportedPage page = writer.getImportedPage(reader, 1);
+
         for (Player player : all) {
-            int size = 40;
+            int size = 72;
             int bold = 1;
-            Paragraph space = new Paragraph(" ", font(100, bold));
+            Paragraph space = new Paragraph(" ", font(40, bold));
             Paragraph number = new Paragraph(player.getStartNumber(), font(size+30, bold));
             Paragraph name = new Paragraph(player.getSecondName().toUpperCase() + " " + player.getFirstName(), font(size, bold));
-            Paragraph club = new Paragraph(player.getClub().getName().toUpperCase() + " " + player.getClub().getCity(), font(size, bold));
+            Paragraph club = new Paragraph(player.getClub().getName().toUpperCase() + " " + player.getClub().getCity(), font(50, bold));
             //0             1               2
             int align = Element.ALIGN_CENTER;
             space.setAlignment(align);
@@ -88,29 +85,25 @@ public class FileService {
                 .size(data.length)
                 .build();
 
-        File fileE =
-                createFileEntity(fileM);
-
-        java.io.File file = new java.io.File(fileName);
-
-        file.delete();
-        return fileE;
+        return createFileEntity(fileM);
     }
 
     //      read file
-    public ResponseEntity<?> importDataFromCSV(String path) {
+    public ResponseEntity<?> importDataFromCSV(MultipartFile file) {
 
-        Path pathToFile = Paths.get(path);
+
         List<String> list = new ArrayList<>();
         try {
-            BufferedReader br = Files.newBufferedReader(pathToFile, Charset.defaultCharset());
-            String line = br.readLine();
-            while (line !=null) {
+            String line;
+            BufferedReader br;
+            InputStream is = file.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) !=null) {
                 String[] data = line.split(";");
                 System.out.println(Arrays.asList(data));
                 String player = playerService.createPlayer(data);
+
                 list.add(player);
-                line = br.readLine();
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -124,10 +117,9 @@ public class FileService {
 
         AtomicInteger i = new AtomicInteger();
         i.getAndAdd(1);
-        String number = "";
 
         sorted.forEach(e -> {
-            String number1 = "";
+            String number1;
 
             if (i.intValue() > 0 && i.intValue() < 10) {
                 number1 = "00" + i;
@@ -187,13 +179,7 @@ public class FileService {
                 .size(data.length)
                 .build();
 
-        File fileE =
-                createFileEntity(fileM);
-
-        java.io.File file = new java.io.File(fileName);
-
-        file.delete();
-        return fileE;
+        return createFileEntity(fileM);
     }
 
     public File getFile(String uuid) {
@@ -214,7 +200,7 @@ public class FileService {
      * @return returns new font
      */
     private Font font(int size, int style) throws IOException, DocumentException {
-        BaseFont czcionka = BaseFont.createFont("font/times.ttf", BaseFont.IDENTITY_H, BaseFont.CACHED);
+        BaseFont czcionka = BaseFont.createFont("font/Asap-Regular.ttf", BaseFont.IDENTITY_H, BaseFont.CACHED);
         return new Font(czcionka, size, style);
     }
 }

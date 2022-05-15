@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -42,8 +43,32 @@ public class PlayerService {
         return ResponseEntity.ok("dodano Zawodnika " + player.getSecondName() + " " + player.getFirstName());
     }
 
+    public ResponseEntity<?> createPlayer(PlayerDTO player, String club) {
+
+        if (playerRepository.existsByLicenseNumber(player.getLicenseNumber()) && !player.getLicenseNumber().isEmpty()) {
+            return ResponseEntity.badRequest().body("Zawodnik " + player.getSecondName() + " " + player.getFirstName() + " znajduje się już na liście");
+        }
+
+
+        Club cl = clubRepository.findByName(club);
+        Player pl = PlayerMapping.map(player);
+
+        pl.setClub(cl);
+        List<Player> all = playerRepository.findAll();
+        // posortuj wszytkich po klubie potem po nazwisku a potem nadaj numer starowy
+//        pl.setStartNumber(/*max*/);
+//        List<String> max = new ArrayList<>();
+
+//        playerRepository.findAll().forEach(e->max.add(e.getStartNumber()));
+//        List<String> collect = max.stream().sorted(Comparator.comparing(String::toString).reversed()).collect(Collectors.toList());
+//        String s = collect.get(0);
+//        pl.setStartNumber(String.valueOf(Integer.valueOf(s+1)));
+        playerRepository.save(pl);
+        return ResponseEntity.ok("dodano Zawodnika " + player.getSecondName() + " " + player.getFirstName());
+    }
+
     public ResponseEntity<?> updatePlayer(Player player, String club) {
-        if (playerRepository.existsById(player.getUuid())) {
+        if (playerRepository.existsById(player.getUuid())&& !player.getLicenseNumber().isEmpty()) {
             Player one = playerRepository.getOne(player.getUuid());
             if (!one.getFirstName().equals(player.getFirstName()) && player.getFirstName() != null) {
                 one.setFirstName(player.getFirstName());
@@ -85,7 +110,7 @@ public class PlayerService {
 
     public String createPlayer(String[] data) {
         // Nazwisko, imię, rok urodzenia, numer licencji, klub, miasto
-        String response = "";
+        String response;
         ClubDTO clubDTO = ClubDTO.builder()
                 .name(data[4])
                 .city(data[5]).build();
